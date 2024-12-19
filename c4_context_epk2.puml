@@ -1,0 +1,64 @@
+@startuml
+!include <C4/C4_Container>
+!theme toy
+skinparam Linetype ortho
+skinparam arrowLength 40
+title Containers: Limit Management System
+scale 2
+
+
+System_Boundary(ЕКП, "EKP.Middle") {
+Container_Ext(OK_Refin, "Образовательный кредит и рефин", "", "Converts limits to user currency")
+
+Container_Ext(Customer_Loan, "Потребительский кредит", "", "Converts limits to user currency")
+
+  }
+
+System_Boundary(UFC, "ЕФС.Сотрудники Кредитная машина") {
+Container_Ext(UI, "Фронтальная логика UI КМ", "", "Репроцесс перевод заявок, в отказ настройки системных параметров")
+
+  }
+
+System_Boundary(Tengry, "Тэнгри") {
+Container_Ext(Tengry_1, "Тэнгри логи", "", "Логи Тэнгри")
+
+  }
+
+System_Boundary(PPRB_KM, "Кредитная машина ФЛ") {
+Container(KP, "ФП КП", "", "Кредитный потенциал")
+Container(Avatar, "ФП Риск Аватар", "", "СПОМЗ и Риск запрос")
+Container(Buro, "ФП Данные бюро", "", "ПДН")
+Container(Traicing, "ФП Сервисы сырых данных", "", "ЕЖТ")
+Container(Risk_Params, "ФП Риск параметры", "", "Управление стратегиями")
+Container(SmartTasking, "ФП SmartTasking", "", "Управление потоком")
+Container(SIAM, "ФП Сбор и анализ метрик", "", "Дашборд Графана")
+
+
+  }
+
+ System(RPK, "РПК", "Потребительский кредит", "Система обработки заявок по потребительским кредитам")
+
+'Расположение компонентов ===========
+Lay_U(OK_Refin,Customer_Loan)
+Lay_U(KP,Avatar)
+Lay_U(Avatar,Buro)
+
+'Отрисовка связей=============
+' Внешние связи (другие АС) ==============
+' 1 Внешние потребители
+OK_Refin -[#blue]-->  RPK: "Заявка на образовательный кредит"
+Customer_Loan -[#blue]--> RPK: "Заявка Потребительский кредит"
+RPK -[#blue]--> Customer_Loan: "Результаты рассмотрения заявки"
+' 2 Внутренние потребители
+UI -[#green]-> RPK: "Репроцесс Перевод заявок в отказ настройки системных параметров"
+RPK -u-> Tengry_1  #green : "Логи"
+' 2 Внутренние связи (внутри КМ) ===========
+RPK -[#green]--> Buro: "Получение ПДН"
+RPK -[#green]--> Risk_Params: "Управление стратегиями"
+RPK -[#green]--> SmartTasking: "ЛПР"
+RPK -[#green]-> KP: "Расчет кредитного потенциала"
+RPK -[#green]--> Traicing: "Единый журнал трейсинга"
+RPK -[#green]--> Avatar: "Мораторные заявки и риск запрос"
+RPK --[#green]---> SIAM: "Технические и бизнес-метрики Графана"
+SHOW_LEGEND()
+@enduml

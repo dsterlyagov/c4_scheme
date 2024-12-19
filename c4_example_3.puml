@@ -1,0 +1,42 @@
+@startuml
+!include <C4/C4_Container>
+
+skinparam wrapWidth 300
+skinparam linetype polyline
+
+LAYOUT_TOP_DOWN()
+
+Person(User, "User")
+
+Container_Ext(CurrencyService, "Currency Conversion Service", "", "Converts limits to user currency")
+
+System_Boundary(system, "Limit Management System") {
+  Container(LimitService,"Limit Management Service", "","Manages withdrawal limits")
+  Container(UserService, "User Management Service","","Manages user data and authentication")
+  Container(TransactionService, "Transaction History Service","","Logs transaction data")
+  Container(SegmentService, "Segment Management Service","","Applies limits to user segments")
+  ContainerDb(DB, "Database","","Stores user, transaction and segment data")
+}
+
+Container_Ext(PaymentService, "Payment Systems Service", "", "Manages deposits and withdrawals")
+
+' Lay_D(CurrencyService,PaymentService)
+' Lay_R(CurrencyService,PaymentService)
+' Lay_D(PaymentService,LimitService)
+Lay_R(User,LimitService)
+Lay_R(LimitService,TransactionService)
+' Lay_R(UserService,DB)
+' Lay_R(DB,SegmentService)
+' Lay_R(SegmentService,TransactionService)
+
+Rel_R(User, LimitService, "Request limit for segment")
+Rel(LimitService, CurrencyService, "Convert limit to user currency")
+Rel(LimitService, UserService, "Retrieve user data")
+Rel_R(LimitService, TransactionService, "Log transaction")
+Rel(LimitService, SegmentService, "Apply limit to segment")
+Rel(LimitService, DB, "Read/write to database")
+Rel(PaymentService, LimitService, "Request to deposit/withdraw funds")
+Rel(PaymentService, TransactionService, "Log transaction")
+Rel(PaymentService, SegmentService, "Check segment limits")
+SHOW_LEGEND()
+@enduml

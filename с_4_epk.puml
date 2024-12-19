@@ -1,0 +1,15 @@
+@startuml
+!define C4Context
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+
+' Цветовые палитры для систем
+LAYOUT_WITH_LEGEND()
+
+' Участники
+System(epk, "ЕПК", "Единая платежная карточка", "Система обработки транзакций и управления платежными данными.")
+System_Ext(km, "КМ", "Клиентская мобильность", "Внешняя система, взаимодействующая с ЕПК для обмена данными о платежах и услугах.")
+
+' Взаимодействие
+Rel(km, epk, "Передает и получает данные о платежах и услугах", "API")
+
+@enduml

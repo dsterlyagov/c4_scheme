@@ -1,0 +1,25 @@
+@startuml
+!include <C4/C4_Container>
+!theme toy
+title Containers: Limit Management System
+scale 2
+Person(User, "User")
+System_Ext(CurrencyService, "Currency Conversion Service",  "Converts limits to user currency")
+Container(LimitService,"Limit Management Service", "","Manages withdrawal limits")
+Container(UserService, "User Management Service","","Manages user data and authentication")
+Container(TransactionService, "Transaction History Service","","Logs transaction data")
+Container(SegmentService, "Segment Management Service","","Applies limits to user segments")
+ContainerDb(DB, "Database","","Stores user, transaction and segment data")
+System_Ext(PaymentService, "Payment Systems Service",  "Manages deposits and withdrawals")
+
+Rel_R(User, LimitService, "Request limit for segment")
+Rel(LimitService, CurrencyService, "Convert limit to user currency")
+Rel(LimitService, UserService, "Retrieve user data")
+Rel_U(LimitService, TransactionService, "Log transaction")
+Rel_R(LimitService, SegmentService, "Apply limit to segment")
+Rel(LimitService, DB, "Read/write to database")
+Rel(PaymentService, LimitService, "Request to deposit/withdraw funds")
+Rel_L(PaymentService, TransactionService, "Log transaction")
+Rel(PaymentService, SegmentService, "Check segment limits")
+
+@enduml
